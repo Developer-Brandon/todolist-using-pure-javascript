@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>TodoList</title>
+</head>
+<body>
+<div>
+    <div id="header">
+        <div id="header__inner">
+            <div id="title">
+                <h1 id="head-line">TodoList</h1>
+            </div>
+            <div id="sub-title">
+                <p id="description">Pure Javascript</p>
+            </div>
+        </div>
+    </div>
+    <div id="body">
+        <div id="body__inner">
+            <div class="write-section">
+                <div class="write-section__top">
+                    <span>Title </span><br/><input id="input-title" class="write-section__left__title" type="text"><br/>
+                    <span>Writer </span><br/><input id="input-writer" class="write-section__left__writer"
+                                                    type="text"><br/>
+                    <span>Contents </span><br/><input id="input-contents" class="write-section__left__contents"
+                                                      type="text"><br/>
+                </div>
+                <div class="write-section__bottom">
+                    <button class="submit" onclick="apply()">Submit</button>
+                </div>
+            </div>
+            <div class="wrap-list">
+                <ul id="ulist">
+                    <!-- Many important codes have to insert here -->
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div id="footer">
+        <div id="footer__inner">
+            <p id="copyright">Made by Brandon Lee</p>
+        </div>
+    </div>
+</div>
+</body>
+</html>
+
+<script>
+ // @Data
+ let dataList = []
+
+ function setCloseButtonToListElement() {
+  return new Promise((resolve, reject) => {
+   let INNER_LIST_ELEMENT_RIGHT = document.getElementsByClassName('list__inner__right')
+   for (let i = 0; i < dataList.length; i++) {
+    let BUTTON_ELEMENT = document.createElement('BUTTON')
+    let deleteText = document.createTextNode('Delete')
+    //
+    BUTTON_ELEMENT.className = "close-button"
+    BUTTON_ELEMENT.appendChild(deleteText)
+    INNER_LIST_ELEMENT_RIGHT[i].appendChild(BUTTON_ELEMENT)
+   }
+   resolve()
+  })
+ }
+
+ function setCloseButtonEventListener() {
+  return new Promise((resolve, reject) => {
+   let closeButtons = document.getElementsByClassName('close-button')
+   for (let i = 0; i < closeButtons.length; i++) {
+    closeButtons[i].onclick = function () {
+     let div = this.parentElement.parentElement
+     div.style.display = 'none'
+     dataList.splice(i, 1)
+    }
+   }
+   resolve()
+  })
+ }
+
+ function setLeftSideOfList() {
+  let LIST_DOM = document.getElementById('ulist')
+  while (LIST_DOM.hasChildNodes()) {
+   LIST_DOM.removeChild(LIST_DOM.firstChild)
+  }
+  //
+  for (let i = 0; i < dataList.length; i++) {
+   // List element
+   let INNER_LIST_ELEMENT = document.createElement('li')
+   INNER_LIST_ELEMENT.className = 'list__inner'
+
+   // Left side of list element
+   let INNER_LIST_ELEMENT_LEFT = document.createElement('div')
+   INNER_LIST_ELEMENT_LEFT.className = 'list__inner__left'
+
+   // Right side of Right element
+   let INNER_LIST_ELEMENT_RIGHT = document.createElement('div')
+   INNER_LIST_ELEMENT_RIGHT.className = 'list__inner__right'
+
+   let TITLE_ELEMENT, CONTENTS_ELEMENT, WRITER_ELEMENT
+
+   // Title element
+   TITLE_ELEMENT = document.createElement('SPAN')
+   let titleNode = document.createTextNode(dataList[i].title)
+   TITLE_ELEMENT.className = 'title-contents'
+   TITLE_ELEMENT.appendChild(titleNode)
+   TITLE_ELEMENT.appendChild(document.createElement('br'))
+
+   // Writer
+   WRITER_ELEMENT = document.createElement('SPAN')
+   let writerNode = document.createTextNode('- ' + dataList[i].writer)
+   WRITER_ELEMENT.className = 'writer-contents'
+   WRITER_ELEMENT.appendChild(writerNode)
+   WRITER_ELEMENT.appendChild(document.createElement('br'))
+
+   // Contents
+   CONTENTS_ELEMENT = document.createElement('SPAN')
+   let contentsNode = document.createTextNode(dataList[i].content)
+   CONTENTS_ELEMENT.className = 'contents-contents'
+   CONTENTS_ELEMENT.appendChild(contentsNode)
+   CONTENTS_ELEMENT.appendChild(document.createElement('br'))
+
+   //
+   INNER_LIST_ELEMENT_LEFT.appendChild(TITLE_ELEMENT)
+   INNER_LIST_ELEMENT_LEFT.appendChild(WRITER_ELEMENT)
+   INNER_LIST_ELEMENT_LEFT.appendChild(CONTENTS_ELEMENT)
+
+   //
+   INNER_LIST_ELEMENT.appendChild(INNER_LIST_ELEMENT_LEFT)
+   INNER_LIST_ELEMENT.appendChild(INNER_LIST_ELEMENT_RIGHT)
+
+   //
+   LIST_DOM.appendChild(INNER_LIST_ELEMENT)
+  }
+ }
+
+ function setRightSideOfList() {
+  this.setCloseButtonToListElement()
+  .then(() => {
+   this.setCloseButtonEventListener()
+   .then(() => {
+    document.getElementById('input-title').value = ''
+    document.getElementById('input-writer').value = ''
+    document.getElementById('input-contents').value = ''
+   })
+  })
+ }
+
+ /////////////////////////////////////////////////////////
+
+ function apply() {
+  let title = document.getElementById('input-title').value
+  let writer = document.getElementById('input-writer').value
+  let content = document.getElementById('input-contents').value
+
+  if (!title || !writer || !content) {
+   return window.alert('You must input all of things about Title, Writer, Contents!')
+  }
+  dataList.push({title, writer, content})
+
+  this.refreshList()
+ }
+
+ ////////////////////////////////////////////////////////
+
+ function refreshList() {
+  this.setLeftSideOfList()
+  this.setRightSideOfList()
+ }
+
+ document.body.onload = function () {
+  this.setLeftSideOfList()
+  this.setRightSideOfList()
+ }
+</script>
+
+
+<style>
+    /* Utils */
+    html {
+        margin: 0;
+        padding: 0;
+    }
+
+    * {
+        -webkit-box-sizing: border-box;
+        box-sizing: border-box;
+    }
+
+    body {
+        width: 100%;
+        color: #333;
+        font-size: 15px;
+        font-weight: 300;
+        margin: 0;
+        padding: 0;
+    }
+
+    body, p, h1, h2, h3, h4, h5, h6, ul, ol, li, dl, dt, dd, table, th, td, form, fieldset, legend, input, textarea, button, select {
+        margin: 0;
+        padding: 0;
+    }
+
+    #copyright {
+        text-align: center;
+        font-weight: 700;
+        margin-bottom: 50px;
+    }
+
+    /* Frames */
+    #header {
+        margin-top: 30px;
+        margin-bottom: 20px;
+    }
+
+    #body {
+        margin-bottom: 20px;
+    }
+
+    #footer {
+        clear: both;
+    }
+
+    .write-section__top {
+        width: 70%;
+        margin: 0 auto;
+    }
+
+    .write-section__bottom {
+        width: 70%;
+        margin: 0 auto;
+        padding-top: 20px;
+        padding-bottom: 20px;
+    }
+
+    /* Ids and Classes */
+    #title {
+        margin-bottom: 5px;
+    }
+
+    #head-line {
+        text-align: center;
+    }
+
+    #sub-title {
+        margin-bottom: 30px;
+    }
+
+    #description {
+        text-align: center;
+    }
+
+    .write-section {
+        padding: 30px;
+    }
+
+    .write-section__left__title {
+        width: 50%;
+    }
+
+    .write-section__left__writer {
+        width: 50%;
+    }
+
+    .write-section__left__contents {
+        width: 100%;
+    }
+
+    .wrap-list {
+        min-height: 200px;
+        height: 100% !important;
+    }
+
+    .list {
+        width: 100%;
+        list-style-type: none;
+        overflow: hidden;
+    }
+
+    .list__inner {
+        width: 65%;
+        margin: 0 auto;
+        overflow: hidden;
+    }
+
+    .list__inner__left {
+        width: 80%;
+        float: left;
+    }
+
+    .list__inner__right {
+        width: 20%;
+        float: right;
+        text-align: center;
+    }
+
+    .submit {
+        width: 100%;
+        height: 40px;
+    }
+
+    .submit:hover {
+        cursor: pointer;
+    }
+
+    .close-button {
+        width: 80px;
+        text-align: center;
+    }
+</style>
